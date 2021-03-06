@@ -9,6 +9,7 @@ using CoreLayer.Interfaces;
 using CoreLayer.Interfaces.Repository;
 using CoreLayer.Interfaces.Runners;
 using CoreLayer.Interfaces.Services;
+using DataAccessLayer;
 using DataAccessLayer.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -18,6 +19,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SignalRTestProject.Workers;
+using Microsoft.EntityFrameworkCore;
+using DataAccessLayer.Interfaces;
 
 namespace SignalRTestProject
 {
@@ -32,7 +35,11 @@ namespace SignalRTestProject
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<IQueueTaskRepository, QueueTaskRepository>();
+            services.AddScoped<IQueueTaskStatusRepository, QueueTaskStatusRepository>();
             services.AddHostedService<LoadingWorker>();
+
             services.AddSingleton<ITaskRepository, TaskRepository>();
             services.AddSingleton<ITaskService, TaskService>();
             services.AddSingleton<ITaskRunner, TaskRunner>();

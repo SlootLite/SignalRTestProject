@@ -7,15 +7,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using CoreLayer.Interfaces.Services;
 
 namespace SignalRTestProject.Workers
 {
     public class LoadingWorker : BackgroundService
     {
         private readonly ITaskRunner _taskRunner;
-        public LoadingWorker(ITaskRunner taskRunner)
+        private readonly IServiceScopeFactory _serviceScopeFactory;
+        public LoadingWorker(ITaskRunner taskRunner,
+            IServiceScopeFactory serviceScopeFactory)
         {
             _taskRunner = taskRunner;
+            _serviceScopeFactory = serviceScopeFactory;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
